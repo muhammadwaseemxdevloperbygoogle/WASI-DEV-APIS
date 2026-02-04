@@ -27,6 +27,32 @@ router.get('/instagram', async (req, res) => {
 });
 
 /**
+ * Google Drive Download
+ * GET /api/download/gdrive?url=...
+ */
+router.get('/gdrive', async (req, res) => {
+    const { url } = req.query;
+    if (!url) return res.status(400).json({ status: false, message: "URL is required" });
+
+    const extra = require('../lib/extra_scrapers');
+    const result = await extra.gdriveDl(url);
+    res.json(result);
+});
+
+/**
+ * Terabox Download
+ * GET /api/download/terabox?url=...
+ */
+router.get('/terabox', async (req, res) => {
+    const { url } = req.query;
+    if (!url) return res.status(400).json({ status: false, message: "URL is required" });
+
+    const extra = require('../lib/extra_scrapers');
+    const result = await extra.teraboxDl(url);
+    res.json(result);
+});
+
+/**
  * Pinterest Download
  * GET /api/download/pinterest?url=...
  */
@@ -36,6 +62,19 @@ router.get('/pinterest', async (req, res) => {
 
     const scraperLight = require('../lib/scrapers_light');
     const result = await scraperLight.pinterestDl(url);
+    res.json(result);
+});
+
+/**
+ * Git Clone Download
+ * GET /api/download/gitclone?url=...
+ */
+router.get('/gitclone', async (req, res) => {
+    const { url } = req.query;
+    if (!url) return res.status(400).json({ status: false, message: "URL is required" });
+
+    const extra = require('../lib/extra_scrapers');
+    const result = await extra.gitClone(url);
     res.json(result);
 });
 

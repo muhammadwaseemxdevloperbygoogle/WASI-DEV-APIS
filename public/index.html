@@ -4,80 +4,418 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WASI DEV APIS | Modern Infrastructure</title>
-    <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <title>WASI DEV APIS | Next-Gen Infrastructure</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                    },
+                    colors: {
+                        glass: "rgba(255, 255, 255, 0.05)",
+                        glassBorder: "rgba(255, 255, 255, 0.1)",
+                        primary: "#3B82F6",
+                        secondary: "#10B981",
+                        accent: "#8B5CF6"
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background: radial-gradient(circle at top left, #1e1b4b, #0f172a, #000000);
+            min-height: 100vh;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .glass-card:hover {
+            background: rgba(255, 255, 255, 0.07);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Gradient Text */
+        .text-gradient {
+            background: linear-gradient(to right, #60A5FA, #A78BFA, #F472B6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+    </style>
 </head>
 
-<body>
-    <div class="glass-container">
-        <header>
-            <h1>WASI DEV APIS</h1>
-            <p class="tagline">Powering the next generation of WhatsApp Bots</p>
+<body class="text-gray-200 antialiased overflow-x-hidden selection:bg-blue-500 selection:text-white">
+
+    <!-- Background Elements -->
+    <div class="fixed top-0 left-0 w-full h-full overflow-hidden -z-10 pointer-events-none">
+        <div
+            class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-600/20 rounded-full blur-[120px] animate-pulse-slow">
+        </div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-purple-600/20 rounded-full blur-[120px] animate-pulse-slow"
+            style="animation-delay: 1.5s;"></div>
+    </div>
+
+    <div class="container mx-auto px-4 py-8 lg:px-8 max-w-7xl">
+
+        <!-- Header Section -->
+        <header class="flex flex-col md:flex-row justify-between items-center mb-12 animate-float">
+            <div class="text-center md:text-left mb-6 md:mb-0">
+                <div class="flex items-center gap-3 justify-center md:justify-start mb-2">
+                    <span
+                        class="bg-blue-500/10 text-blue-400 border border-blue-500/20 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">v2.0.0
+                        Stable</span>
+                    <span class="flex h-3 w-3 relative">
+                        <span
+                            class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+                    </span>
+                    <span class="text-xs text-green-400 font-medium">System Operational</span>
+                </div>
+                <h1 class="text-5xl md:text-7xl font-bold tracking-tight mb-2">WASI <span
+                        class="text-gradient">APIs</span></h1>
+                <p class="text-gray-400 text-lg max-w-lg">The ultimate native scraping infrastructure for
+                    high-performance WhatsApp bots.</p>
+            </div>
+
+            <!-- Developer Profile Card (Dynamic) -->
+            <div id="dev-profile"
+                class="glass-card p-5 rounded-2xl flex items-center gap-5 w-full md:w-auto max-w-sm transition-all duration-300">
+                <div class="relative">
+                    <img id="dev-avatar" src="https://github.com/Itxxwasi.png" alt="Dev"
+                        class="w-16 h-16 rounded-full border-2 border-white/10 shadow-lg object-cover">
+                    <div class="absolute bottom-0 right-0 w-4 h-4 bg-green-500 border-2 border-[#0f172a] rounded-full">
+                    </div>
+                </div>
+                <div>
+                    <h3 class="font-bold text-xl text-white flex items-center gap-2">
+                        Wasi Dev <i class="fas fa-check-circle text-blue-500 text-sm"></i>
+                    </h3>
+                    <p id="dev-bio" class="text-sm text-gray-400 line-clamp-1">Full-Stack Developer & Bot Creator</p>
+                    <div class="flex gap-3 mt-2 text-sm text-gray-500">
+                        <a href="https://github.com/Itxxwasi" target="_blank"
+                            class="hover:text-white transition-colors"><i class="fab fa-github"></i> Itxxwasi</a>
+                    </div>
+                </div>
+            </div>
         </header>
 
-        <main>
-            <section class="api-status">
-                <div class="status-card">
-                    <span class="dot pulse"></span>
-                    <span>System Online</span>
-                </div>
-            </section>
+        <!-- Server Stats Grid -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
+            <div class="glass-card p-4 rounded-xl text-center">
+                <div class="text-gray-500 text-xs uppercase tracking-widest mb-1">Status</div>
+                <div class="text-green-400 font-bold text-xl"><i class="fas fa-wifi mr-2"></i>Online</div>
+            </div>
+            <div class="glass-card p-4 rounded-xl text-center">
+                <div class="text-gray-500 text-xs uppercase tracking-widest mb-1">Latency</div>
+                <div class="text-blue-400 font-bold text-xl"><i class="fas fa-bolt mr-2"></i><span id="ping">--</span>
+                    ms</div>
+            </div>
+            <div class="glass-card p-4 rounded-xl text-center">
+                <div class="text-gray-500 text-xs uppercase tracking-widest mb-1">Uptime</div>
+                <div class="text-purple-400 font-bold text-xl"><span id="uptime">--</span></div>
+            </div>
+            <div class="glass-card p-4 rounded-xl text-center">
+                <div class="text-gray-500 text-xs uppercase tracking-widest mb-1">Requests</div>
+                <div class="text-yellow-400 font-bold text-xl"><span id="req-count">10k+</span></div>
+            </div>
+        </div>
 
-            <section class="endpoints">
-                <h2>Ready Endpoints</h2>
-                <div class="card-grid">
-                    <div class="card stalker">
-                        <h3>Stalkers</h3>
-                        <ul>
-                            <li><code>/api/stalk/github?username=...</code></li>
-                        </ul>
+        <!-- Main Content -->
+        <main>
+            <!-- Categories Navigation -->
+            <div class="flex overflow-x-auto gap-4 mb-8 pb-2 scrollbar-hide">
+                <button
+                    class="px-6 py-2 rounded-full bg-white/10 text-white font-medium hover:bg-white/20 transition-all border border-white/5 active">All</button>
+                <button
+                    class="px-6 py-2 rounded-full glass-card text-gray-400 hover:text-white transition-all">Stalkers</button>
+                <button
+                    class="px-6 py-2 rounded-full glass-card text-gray-400 hover:text-white transition-all">Downloaders</button>
+                <button
+                    class="px-6 py-2 rounded-full glass-card text-gray-400 hover:text-white transition-all">Search</button>
+                <button
+                    class="px-6 py-2 rounded-full glass-card text-gray-400 hover:text-white transition-all">Converters</button>
+            </div>
+
+            <!-- Endpoint Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+                <!-- Stalkers -->
+                <div class="glass-card rounded-2xl p-6 group transition-all duration-300">
+                    <div class="flex items-center gap-4 mb-5">
+                        <div
+                            class="w-12 h-12 rounded-xl bg-blue-500/20 flex items-center justify-center text-blue-400 group-hover:scale-110 transition-transform">
+                            <i class="fas fa-user-secret text-2xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-100">Profile Stalkers</h3>
+                            <p class="text-xs text-gray-500">Extract user details</p>
+                        </div>
                     </div>
-                    <div class="card downloader">
-                        <h3>Downloaders</h3>
-                        <ul>
-                            <li><code>/api/download/tiktok?url=...</code></li>
-                            <li><code>/api/download/instagram?url=...</code></li>
-                        </ul>
-                    </div>
-                    <div class="card pinterest">
-                        <h3>Pinterest Tools</h3>
-                        <ul>
-                            <li><code>/api/search/pinterest?q=...</code></li>
-                            <li><code>/api/download/pinterest?url=...</code></li>
-                        </ul>
-                    </div>
-                    <div class="card search">
-                        <h3>Search & AI</h3>
-                        <ul>
-                            <li><code>/api/search/google?q=...</code></li>
-                            <li><code>/api/search/weather?city=...</code></li>
-                            <li><code>/api/search/chat?message=...</code></li>
-                        </ul>
-                    </div>
-                    <div class="card tiktok">
-                        <h3>TikTok Tools</h3>
-                        <ul>
-                            <li><code>/api/tiktok/download?url=...</code></li>
-                            <li><code>/api/tiktok/stalk?username=...</code></li>
-                        </ul>
-                    </div>
-                    <div class="card conversion">
-                        <h3>Conversion Tools</h3>
-                        <ul>
-                            <li><code>POST /api/convert/tourl</code></li>
-                            <li><code>POST /api/convert/sticker</code></li>
-                            <li><code>POST /api/convert/toaudio</code></li>
-                        </ul>
+                    <div class="space-y-3">
+                        <div
+                            class="bg-black/20 p-3 rounded-lg border border-white/5 hover:border-blue-500/30 transition-colors cursor-pointer group/link">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="text-sm font-semibold text-gray-300">GitHub User</span>
+                                <span class="text-[10px] bg-blue-500/20 text-blue-300 px-2 py-0.5 rounded">GET</span>
+                            </div>
+                            <code
+                                class="text-xs text-blue-400 block truncate group-hover/link:text-blue-300">/api/stalk/github?username=...</code>
+                        </div>
+                        <div
+                            class="bg-black/20 p-3 rounded-lg border border-white/5 hover:border-pink-500/30 transition-colors cursor-pointer group/link">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="text-sm font-semibold text-gray-300">Instagram User</span>
+                                <span class="text-[10px] bg-pink-500/20 text-pink-300 px-2 py-0.5 rounded">GET</span>
+                            </div>
+                            <code
+                                class="text-xs text-pink-400 block truncate group-hover/link:text-pink-300">/api/stalk/instagram?username=...</code>
+                        </div>
+                        <div
+                            class="bg-black/20 p-3 rounded-lg border border-white/5 hover:border-cyan-500/30 transition-colors cursor-pointer group/link">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="text-sm font-semibold text-gray-300">TikTok User</span>
+                                <span class="text-[10px] bg-cyan-500/20 text-cyan-300 px-2 py-0.5 rounded">GET</span>
+                            </div>
+                            <code
+                                class="text-xs text-cyan-400 block truncate group-hover/link:text-cyan-300">/api/tiktok/stalk?username=...</code>
+                        </div>
                     </div>
                 </div>
-            </section>
+
+                <!-- Downloaders -->
+                <div class="glass-card rounded-2xl p-6 group transition-all duration-300">
+                    <div class="flex items-center gap-4 mb-5">
+                        <div
+                            class="w-12 h-12 rounded-xl bg-green-500/20 flex items-center justify-center text-green-400 group-hover:scale-110 transition-transform">
+                            <i class="fas fa-download text-2xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-100">Media Downloaders</h3>
+                            <p class="text-xs text-gray-500">Native No-Watermark</p>
+                        </div>
+                    </div>
+                    <div class="space-y-3">
+                        <div
+                            class="bg-black/20 p-3 rounded-lg border border-white/5 hover:border-white/20 transition-colors">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="text-sm font-semibold text-gray-300">TikTok Video</span>
+                                <span class="text-[10px] bg-green-500/20 text-green-300 px-2 py-0.5 rounded">GET</span>
+                            </div>
+                            <code class="text-xs text-gray-400 block truncate">/api/download/tiktok?url=...</code>
+                        </div>
+                        <div
+                            class="bg-black/20 p-3 rounded-lg border border-white/5 hover:border-white/20 transition-colors">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="text-sm font-semibold text-gray-300">Instagram Post (Native)</span>
+                                <span class="text-[10px] bg-green-500/20 text-green-300 px-2 py-0.5 rounded">GET</span>
+                            </div>
+                            <code class="text-xs text-gray-400 block truncate">/api/download/instagram?url=...</code>
+                        </div>
+                        <div
+                            class="bg-black/20 p-3 rounded-lg border border-white/5 hover:border-white/20 transition-colors">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="text-sm font-semibold text-gray-300">Google Drive</span>
+                                <span class="text-[10px] bg-blue-500/20 text-blue-300 px-2 py-0.5 rounded">GET</span>
+                            </div>
+                            <code class="text-xs text-gray-400 block truncate">/api/download/gdrive?url=...</code>
+                        </div>
+                        <div
+                            class="bg-black/20 p-3 rounded-lg border border-white/5 hover:border-white/20 transition-colors">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="text-sm font-semibold text-gray-300">Terabox / Git Clone</span>
+                                <span
+                                    class="text-[10px] bg-purple-500/20 text-purple-300 px-2 py-0.5 rounded">GET</span>
+                            </div>
+                            <code class="text-xs text-gray-400 block truncate">/api/download/terabox?url=...</code>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pinterest & Search -->
+                <div class="glass-card rounded-2xl p-6 group transition-all duration-300">
+                    <div class="flex items-center gap-4 mb-5">
+                        <div
+                            class="w-12 h-12 rounded-xl bg-red-500/20 flex items-center justify-center text-red-400 group-hover:scale-110 transition-transform">
+                            <i class="fab fa-pinterest text-2xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-100">Pinterest & Search</h3>
+                            <p class="text-xs text-gray-500">Image Search & Utilities</p>
+                        </div>
+                    </div>
+                    <div class="space-y-3">
+                        <div
+                            class="bg-black/20 p-3 rounded-lg border border-white/5 hover:border-red-500/30 transition-colors">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="text-sm font-semibold text-gray-300">Pinterest Search</span>
+                                <span class="text-[10px] bg-red-500/20 text-red-300 px-2 py-0.5 rounded">GET</span>
+                            </div>
+                            <code class="text-xs text-red-400 block truncate">/api/search/pinterest?q=...</code>
+                        </div>
+                        <div
+                            class="bg-black/20 p-3 rounded-lg border border-white/5 hover:border-red-500/30 transition-colors">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="text-sm font-semibold text-gray-300">Pinterest DL</span>
+                                <span class="text-[10px] bg-red-500/20 text-red-300 px-2 py-0.5 rounded">GET</span>
+                            </div>
+                            <code class="text-xs text-red-400 block truncate">/api/download/pinterest?url=...</code>
+                        </div>
+                        <div
+                            class="bg-black/20 p-3 rounded-lg border border-white/5 hover:border-yellow-500/30 transition-colors">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="text-sm font-semibold text-gray-300">Google Search</span>
+                                <span
+                                    class="text-[10px] bg-yellow-500/20 text-yellow-300 px-2 py-0.5 rounded">GET</span>
+                            </div>
+                            <code class="text-xs text-yellow-400 block truncate">/api/search/google?q=...</code>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Converters -->
+                <div class="glass-card rounded-2xl p-6 group transition-all duration-300 md:col-span-2 lg:col-span-3">
+                    <div class="flex items-center gap-4 mb-5">
+                        <div
+                            class="w-12 h-12 rounded-xl bg-orange-500/20 flex items-center justify-center text-orange-400 group-hover:scale-110 transition-transform">
+                            <i class="fas fa-magic text-2xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-100">AI & Converters</h3>
+                            <p class="text-xs text-gray-500">Media transformation tools</p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div
+                            class="bg-black/20 p-4 rounded-xl border border-white/5 flex flex-col items-center text-center hover:bg-white/5 transition-all">
+                            <i class="fas fa-image text-3xl text-gray-500 mb-3"></i>
+                            <h4 class="font-bold text-gray-200">Image to URL</h4>
+                            <code
+                                class="text-[10px] text-gray-500 mt-2 bg-black/40 px-2 py-1 rounde">POST /api/convert/tourl</code>
+                        </div>
+                        <div
+                            class="bg-black/20 p-4 rounded-xl border border-white/5 flex flex-col items-center text-center hover:bg-white/5 transition-all">
+                            <i class="fas fa-sticky-note text-3xl text-gray-500 mb-3"></i>
+                            <h4 class="font-bold text-gray-200">WebP Sticker</h4>
+                            <code
+                                class="text-[10px] text-gray-500 mt-2 bg-black/40 px-2 py-1 rounde">POST /api/convert/sticker</code>
+                        </div>
+                        <div
+                            class="bg-black/20 p-4 rounded-xl border border-white/5 flex flex-col items-center text-center hover:bg-white/5 transition-all">
+                            <i class="fas fa-music text-3xl text-gray-500 mb-3"></i>
+                            <h4 class="font-bold text-gray-200">Video to MP3</h4>
+                            <code
+                                class="text-[10px] text-gray-500 mt-2 bg-black/40 px-2 py-1 rounde">POST /api/convert/toaudio</code>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
         </main>
 
-        <footer>
-            <p>&copy; 2026 WASI DEV. All rights reserved.</p>
+        <footer class="mt-20 border-t border-white/5 pt-8 text-center text-gray-500 text-sm">
+            <p>&copy; 2026 WASI DEV. Built with ❤️ for the Community.</p>
         </footer>
     </div>
+
+    <!-- Real-time Stats Script -->
+    <script>
+        // Use browser timing for a rough ping estimate
+        const start = Date.now();
+        fetch(window.location.href, { method: 'HEAD' }).then(() => {
+            document.getElementById('ping').innerText = Date.now() - start;
+        });
+
+        // Uptime Counter
+        let seconds = 0;
+        setInterval(() => {
+            seconds++;
+            const days = Math.floor(seconds / 86400);
+            const hrs = Math.floor((seconds % 86400) / 3600);
+            const mins = Math.floor((seconds % 3600) / 60);
+            const secs = seconds % 60;
+            document.getElementById('uptime').innerText = `${days}d ${hrs}h ${mins}m ${secs}s`;
+        }, 1000);
+
+        // Fetch Developer Profile (Dynamic)
+        async function fetchDevProfile() {
+            try {
+                // Using our own API to fetch self :)
+                const res = await fetch('/api/stalk/github?username=Itxxwasi');
+                const data = await res.json();
+
+                if (data.status && data.result) {
+                    const dev = data.result;
+                    document.getElementById('dev-avatar').src = dev.avatar;
+                    document.getElementById('dev-bio').innerText = dev.bio;
+                }
+            } catch (e) {
+                console.log("Could not fetch dev profile");
+            }
+        }
+
+        // Fetch Real-time System Stats
+        async function fetchSystemStats() {
+            try {
+                const res = await fetch('/health');
+                const data = await res.json();
+                if (data.status) {
+                    // Update Request Count
+                    const reqCount = data.requests || 0;
+                    document.getElementById('req-count').innerText = reqCount > 1000 ? (reqCount / 1000).toFixed(1) + 'k' : reqCount;
+                }
+            } catch (e) {
+                console.log("Stats fetch failed");
+            }
+        }
+
+        fetchDevProfile();
+        fetchSystemStats();
+        // Poll stats every 30 seconds
+        setInterval(fetchSystemStats, 30000);
+    </script>
 </body>
 
 </html>

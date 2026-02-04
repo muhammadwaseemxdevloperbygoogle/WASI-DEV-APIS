@@ -26,14 +26,30 @@ app.use('/api/search', searchRoutes);
 app.use('/api/convert', convertRoutes);
 app.use('/api/tiktok', tiktokRoutes);
 
+// Request Counter
+global.requestCount = 0;
+
+// Request Counting Middleware
+app.use((req, res, next) => {
+    if (req.path.startsWith('/api')) {
+        global.requestCount++;
+    }
+    next();
+});
+
 // Landing Page
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// Health Check (For Heroku/Uptime Monitors)
+// Health Check & Stats (For Heroku/Uptime Monitors)
 app.get('/health', (req, res) => {
-    res.json({ status: true, message: "WASI-DEV-APIS is healthy!", uptime: process.uptime() });
+    res.json({
+        status: true,
+        message: "WASI-DEV-APIS is healthy!",
+        uptime: process.uptime(),
+        requests: global.requestCount
+    });
 });
 
 // 404 Handler

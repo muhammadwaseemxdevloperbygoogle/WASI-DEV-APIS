@@ -33,4 +33,17 @@ router.get('/github', async (req, res) => {
     }
 });
 
+/**
+ * Instagram Stalk
+ * GET /api/stalk/instagram?username=...
+ */
+router.get('/instagram', async (req, res) => {
+    const { username } = req.query;
+    if (!username) return res.status(400).json({ status: false, message: "Username parameter is required" });
+
+    const extra = require('../lib/extra_scrapers');
+    const result = await extra.igStalk(username);
+    res.json(result);
+});
+
 module.exports = router;
