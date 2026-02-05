@@ -25,6 +25,7 @@ app.use('/api/download', downloadRoutes);
 app.use('/api/search', searchRoutes);
 app.use('/api/convert', convertRoutes);
 app.use('/api/tiktok', tiktokRoutes);
+app.use('/api/cricket', require('./routes/cricket'));
 
 // Request Counter
 global.requestCount = 0;

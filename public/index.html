@@ -63,6 +63,7 @@
         /* Gradient Text */
         .text-gradient {
             background: linear-gradient(to right, #60A5FA, #A78BFA, #F472B6);
+            background-clip: text;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
@@ -311,6 +312,46 @@
                                     class="text-[10px] bg-yellow-500/20 text-yellow-300 px-2 py-0.5 rounded">GET</span>
                             </div>
                             <code class="text-xs text-yellow-400 block truncate">/api/search/google?q=...</code>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Live Sports -->
+                <div class="glass-card rounded-2xl p-6 group transition-all duration-300">
+                    <div class="flex items-center gap-4 mb-5">
+                        <div
+                            class="w-12 h-12 rounded-xl bg-teal-500/20 flex items-center justify-center text-teal-400 group-hover:scale-110 transition-transform">
+                            <i class="fas fa-baseball-bat-ball text-2xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-100">Live Sports</h3>
+                            <p class="text-xs text-gray-500">Real-time Cricket Data</p>
+                        </div>
+                    </div>
+                    <div class="space-y-3">
+                        <div
+                            class="bg-black/20 p-3 rounded-lg border border-white/5 hover:border-teal-500/30 transition-colors">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="text-sm font-semibold text-gray-300">Live Matches</span>
+                                <span class="text-[10px] bg-teal-500/20 text-teal-300 px-2 py-0.5 rounded">GET</span>
+                            </div>
+                            <code class="text-xs text-teal-400 block truncate">/api/cricket/live</code>
+                        </div>
+                        <div
+                            class="bg-black/20 p-3 rounded-lg border border-white/5 hover:border-teal-500/30 transition-colors">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="text-sm font-semibold text-gray-300">Match & Players Info</span>
+                                <span class="text-[10px] bg-teal-500/20 text-teal-300 px-2 py-0.5 rounded">GET</span>
+                            </div>
+                            <code class="text-xs text-teal-400 block truncate">/api/cricket/details?id=...</code>
+                        </div>
+                        <div
+                            class="bg-black/20 p-3 rounded-lg border border-white/5 hover:border-teal-500/30 transition-colors">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="text-sm font-semibold text-gray-300">Match Schedule</span>
+                                <span class="text-[10px] bg-teal-500/20 text-teal-300 px-2 py-0.5 rounded">GET</span>
+                            </div>
+                            <code class="text-xs text-teal-400 block truncate">/api/cricket/schedule</code>
                         </div>
                     </div>
                 </div>
