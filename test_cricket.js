@@ -17,6 +17,7 @@ async function test() {
         console.log("Live Status:", details.liveStatus);
         console.log("Score:", details.liveScore);
         console.log("Batting Players:", details.players.batting.slice(0, 3));
+        console.log("Bowling Players:", details.players.bowling.slice(0, 3));
     } else {
         console.log("No live matches to test details.");
     }
