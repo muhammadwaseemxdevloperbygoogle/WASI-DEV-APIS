@@ -5,6 +5,12 @@ node_modules/
 .env
 .env.local
 
+# Next.js build output
+.next/
+out/
+build/
+dist/
+
 # Temp files
 temp/
 *.log

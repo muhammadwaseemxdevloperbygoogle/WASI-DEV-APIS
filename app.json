@@ -1,0 +1,27 @@
+{
+    "name": "Wasidev APIs",
+    "description": "Native Scraping Infrastructure & Documentation Hub for Wasi MD Ecosystem.",
+    "repository": "https://github.com/Itxxwasi/wasidevapis",
+    "keywords": [
+        "node",
+        "express",
+        "nextjs",
+        "api",
+        "scraping",
+        "cricket",
+        "bot"
+    ],
+    "buildpacks": [
+        {
+            "url": "https://github.com/jonathanong/heroku-buildpack-ffmpeg-latest.git"
+        },
+        {
+            "url": "heroku/nodejs"
+        }
+    ],
+    "env": {
+        "NODE_ENV": {
+            "value": "production"
+        }
+    }
+}
