@@ -266,4 +266,10 @@ const PROJECTS = [
     desc: "Real-time cricket match data delivery system. Fetches scores, commentary, and player stats with sub-second latency.",
     tags: ["Cheerio", "Next.js", "Redis"],
   },
+  {
+    name: "KitabNagri Scraper",
+    status: "New • Live",
+    desc: "A specialized scraper for KitabNagri.org. Allows users to search through thousands of Urdu novels and download them as PDFs directly.",
+    tags: ["Axios", "Cheerio", "PDF"],
+  },
 ]

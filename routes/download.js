@@ -78,4 +78,17 @@ router.get('/gitclone', async (req, res) => {
     res.json(result);
 });
 
+/**
+ * Mediafire Download
+ * GET /api/download/mediafire?url=...
+ */
+router.get('/mediafire', async (req, res) => {
+    const { url } = req.query;
+    if (!url) return res.status(400).json({ status: false, message: "URL is required" });
+
+    const extra = require('../lib/extra_scrapers');
+    const result = await extra.mediafireDl(url);
+    res.json(result);
+});
+
 module.exports = router;

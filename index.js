@@ -30,6 +30,7 @@ nextApp.prepare().then(() => {
     app.use('/api/convert', require('./routes/convert'));
     app.use('/api/tiktok', require('./routes/tiktok'));
     app.use('/api/cricket', require('./routes/cricket'));
+    app.use('/api/kitabnagri', require('./routes/kitabnagri'));
 
     // Global Request Counter
     global.requestCount = 0;
