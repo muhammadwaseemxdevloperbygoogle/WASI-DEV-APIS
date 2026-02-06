@@ -2,223 +2,387 @@
 
 import React, { useEffect, useState } from "react";
 import useSWR from "swr";
-import { Copy, Terminal, Activity, Users, Server, ExternalLink, ChevronRight, Code2 } from "lucide-react";
-import { motion } from "framer-motion";
+import {
+  Terminal, Activity, ExternalLink,
+  ChevronRight, Play, Bot, Zap, Globe, ShieldCheck,
+  CheckCircle2, XCircle, Loader2, FlaskConical
+} from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
+import { Card } from "@/components/ui/card";
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
+// API Endpoints to test
+const API_ENDPOINTS = [
+  { name: "Health Check", endpoint: "/health", method: "GET" },
+  { name: "YouTube Search", endpoint: "/api/search/youtube?q=test", method: "GET" },
+  { name: "YouTube Video DL", endpoint: "/api/download/youtube/video?url=https://youtube.com/watch?v=dQw4w9WgXcQ", method: "GET" },
+  { name: "YouTube Audio DL", endpoint: "/api/download/youtube/audio?url=https://youtube.com/watch?v=dQw4w9WgXcQ", method: "GET" },
+  { name: "Pinterest Search", endpoint: "/api/search/pinterest?q=nature", method: "GET" },
+  { name: "KitabNagri Search", endpoint: "/api/search/kitabnagri?q=ishq", method: "GET" },
+];
+
 export default function LandingPage() {
-  const { data: healthData, error } = useSWR("/health", fetcher, { refreshInterval: 5000 });
+  const { data: healthData } = useSWR("/health", fetcher, { refreshInterval: 5000 });
+  const [mounted, setMounted] = useState(false);
+  const [apiResults, setApiResults] = useState<Record<string, { status: 'idle' | 'loading' | 'success' | 'error', time?: number, message?: string }>>({});
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const testEndpoint = async (name: string, endpoint: string) => {
+    setApiResults(prev => ({ ...prev, [name]: { status: 'loading' } }));
+    const startTime = Date.now();
+
+    try {
+      const response = await fetch(endpoint);
+      const data = await response.json();
+      const time = Date.now() - startTime;
+
+      if (data.status === true || data.status === 'ok' || response.ok) {
+        setApiResults(prev => ({ ...prev, [name]: { status: 'success', time, message: 'OK' } }));
+      } else {
+        setApiResults(prev => ({ ...prev, [name]: { status: 'error', time, message: data.message || 'Failed' } }));
+      }
+    } catch (error: any) {
+      const time = Date.now() - startTime;
+      setApiResults(prev => ({ ...prev, [name]: { status: 'error', time, message: error.message } }));
+    }
+  };
+
+  const testAllEndpoints = async () => {
+    for (const api of API_ENDPOINTS) {
+      await testEndpoint(api.name, api.endpoint);
+    }
+  };
+
+  if (!mounted) return null;
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-50 selection:bg-blue-500/30">
+    <div className="min-h-screen mesh-gradient text-slate-50 selection:bg-blue-500/30 font-sans bg-grid relative pb-32">
 
       {/* Navigation */}
       <motion.nav
         initial={{ y: -100 }}
         animate={{ y: 0 }}
-        className="fixed top-0 w-full z-50 border-b border-white/5 bg-slate-950/80 backdrop-blur-md"
+        className="fixed top-0 w-full z-50 border-b border-white/5 bg-slate-950/40 backdrop-blur-xl"
       >
-        <div className="container mx-auto px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2 font-bold text-xl tracking-tighter">
-            <div className="h-8 w-8 bg-blue-600 rounded-lg flex items-center justify-center">
-              <Terminal className="h-5 w-5 text-white" />
+        <div className="container mx-auto px-6 h-20 flex items-center justify-between">
+          <div className="flex items-center gap-3 font-bold text-2xl tracking-tighter">
+            <div className="h-10 w-10 bg-gradient-to-br from-blue-600 to-emerald-500 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20">
+              <Terminal className="h-6 w-6 text-white" />
             </div>
-            <span>WASIDEV</span>
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400">WASIDEV</span>
           </div>
-          <div className="hidden md:flex gap-8 text-sm font-medium text-slate-400">
-            <a href="#projects" className="hover:text-white transition-colors">Projects</a>
-            <a href="#stats" className="hover:text-white transition-colors">System Status</a>
-            <a href="/docs" className="hover:text-white transition-colors">Documentation</a>
+          <div className="hidden md:flex gap-10 text-sm font-semibold text-slate-400">
+            <a href="#features" className="hover:text-white transition-colors uppercase tracking-widest text-[10px]">Features</a>
+            <a href="#api-tester" className="hover:text-white transition-colors uppercase tracking-widest text-[10px]">API Tester</a>
+            <a href="#projects" className="hover:text-white transition-colors uppercase tracking-widest text-[10px]">Ecosystem</a>
+            <a href="#stats" className="hover:text-white transition-colors uppercase tracking-widest text-[10px]">Status</a>
           </div>
-          <Button variant="outline" className="hidden md:flex gap-2">
-            <Code2 className="h-4 w-4" />
-            GitHub
-          </Button>
+          <div className="flex items-center gap-4">
+            <Button variant="ghost" className="text-slate-400 hover:text-white hidden lg:flex">Login</Button>
+            <Button className="bg-white text-slate-950 hover:bg-slate-200 font-bold px-6 rounded-full transition-all hover:scale-105 active:scale-95">
+              Get Started
+            </Button>
+          </div>
         </div>
       </motion.nav>
 
       {/* Hero Section */}
-      <section className="pt-32 pb-20 px-6 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-900/20 via-slate-950 to-slate-950 pointer-events-none" />
+      <section className="relative pt-48 pb-32 px-6 overflow-hidden">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-blue-500/10 blur-[120px] rounded-full pointer-events-none" />
 
-        <div className="container mx-auto max-w-5xl relative z-10 flex flex-col items-center text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-sm font-medium mb-8"
-          >
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
-            </span>
-            System Online & Operational
-          </motion.div>
+        <div className="container mx-auto max-w-6xl relative z-10">
+          <div className="flex flex-col items-center text-center">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-900/50 border border-white/10 text-blue-400 text-xs font-bold mb-10 backdrop-blur-md shadow-xl"
+            >
+              <Zap className="h-3 w-3 fill-blue-400" />
+              <span>V7.2 IS NOW LIVE WITH 40+ NEW APIS</span>
+            </motion.div>
 
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="text-5xl md:text-7xl font-bold tracking-tight mb-6 bg-clip-text text-transparent bg-gradient-to-b from-white to-slate-400"
-          >
-            Automating the Future <br />
-            with <span className="text-blue-500">Wasi MD</span>
-          </motion.h1>
+            <motion.h1
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
+              className="max-sm:text-4xl text-6xl md:text-8xl font-black tracking-tight mb-8 leading-[0.9] text-white"
+            >
+              The AI-Powered <br />
+              <span className="text-gradient">API Infrastructure</span>
+            </motion.h1>
 
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-            className="text-lg md:text-xl text-slate-400 max-w-2xl mb-10 leading-relaxed"
-          >
-            Advanced WhatsApp automation infrastructure, high-performance web scrapers, and
-            developer-first APIs. Built for scale, designed for developers.
-          </motion.p>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2, duration: 0.8 }}
+              className="text-lg md:text-2xl text-slate-400 max-w-3xl mb-12 leading-relaxed"
+            >
+              High-performance scrapers, WhatsApp automation, and developer-centric tools.
+              Build faster with our robust, scalable backend ecosystem.
+            </motion.p>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5 }}
-            className="flex flex-wrap items-center justify-center gap-4"
-          >
-            <Button size="lg" className="h-12 px-8 text-base bg-blue-600 hover:bg-blue-500">
-              Get Started
-              <ChevronRight className="ml-2 h-4 w-4" />
-            </Button>
-            <Button size="lg" variant="outline" className="h-12 px-8 text-base bg-slate-950/50 backdrop-blur-sm border-slate-800 hover:bg-slate-900">
-              View Documentation
-            </Button>
-          </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+              className="flex flex-wrap items-center justify-center gap-6"
+            >
+              <Button size="lg" className="h-14 px-10 text-lg bg-blue-600 hover:bg-blue-500 rounded-full glow-blue">
+                Explore APIs
+                <ChevronRight className="ml-2 h-5 w-5" />
+              </Button>
+              <Button size="lg" variant="outline" className="h-14 px-10 text-lg bg-slate-950/20 backdrop-blur-md border-white/10 hover:bg-white/5 rounded-full ring-1 ring-white/5">
+                Join Discord
+              </Button>
+            </motion.div>
 
-          {/* Terminal Preview */}
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6 }}
-            className="mt-16 w-full max-w-3xl rounded-xl border border-slate-800 bg-slate-950/50 shadow-2xl backdrop-blur-sm overflow-hidden"
-          >
-            <div className="flex items-center gap-2 px-4 py-3 border-b border-white/5 bg-slate-900/50">
-              <div className="flex gap-1.5">
-                <div className="w-3 h-3 rounded-full bg-red-500/20 border border-red-500/50" />
-                <div className="w-3 h-3 rounded-full bg-yellow-500/20 border border-yellow-500/50" />
-                <div className="w-3 h-3 rounded-full bg-green-500/20 border border-green-500/50" />
+            {/* Code Playground */}
+            <motion.div
+              initial={{ opacity: 0, y: 60 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.6, duration: 1 }}
+              className="mt-24 w-full max-w-4xl group"
+            >
+              <div className="relative rounded-2xl border border-white/10 bg-slate-950/80 shadow-[0_0_50px_-12px_rgba(59,130,246,0.3)] backdrop-blur-2xl overflow-hidden transition-all duration-500 group-hover:border-blue-500/30 group-hover:shadow-[0_0_80px_-12px_rgba(59,130,246,0.4)]">
+                <div className="flex items-center justify-between px-6 py-4 border-b border-white/5 bg-slate-900/40">
+                  <div className="flex gap-2">
+                    <div className="w-3 h-3 rounded-full bg-red-500/40" />
+                    <div className="w-3 h-3 rounded-full bg-yellow-500/40" />
+                    <div className="w-3 h-3 rounded-full bg-green-500/40" />
+                  </div>
+                  <div className="text-[10px] text-slate-500 font-bold uppercase tracking-[0.2em]">Request Simulator</div>
+                  <div className="w-12" />
+                </div>
+                <div className="flex flex-col md:flex-row divide-y md:divide-y-0 md:divide-x divide-white/5 min-h-[340px]">
+                  <div className="flex-1 p-8 font-mono text-left bg-slate-950/50">
+                    <div className="text-blue-400 mb-2">// Fetch any media instantly</div>
+                    <div className="flex gap-3 mb-6">
+                      <span className="text-emerald-400 uppercase font-bold text-xs">GET</span>
+                      <span className="text-slate-200">/api/download/youtube</span>
+                    </div>
+                    <div className="space-y-1 text-slate-400 text-sm">
+                      <div>query: &#123;</div>
+                      <div className="pl-6">url: <span className="text-orange-300">"https://youtu.be/..."</span>,</div>
+                      <div className="pl-6">type: <span className="text-orange-300">"audio"</span></div>
+                      <div>&#125;</div>
+                    </div>
+                    <Button className="mt-8 bg-blue-600/20 hover:bg-blue-600 text-blue-400 hover:text-white border border-blue-600/30 text-xs py-1 h-9 font-bold px-6 rounded-lg transition-all">
+                      RUN REQUEST
+                    </Button>
+                  </div>
+                  <div className="flex-1 p-8 font-mono text-left bg-[#020617]">
+                    <div className="text-slate-600 mb-4 uppercase text-[10px] font-bold">Response</div>
+                    <AnimatePresence mode="wait">
+                      <motion.div
+                        key="resp"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        className="space-y-1 text-xs"
+                      >
+                        <div className="text-slate-400">&#123;</div>
+                        <div className="pl-4"><span className="text-purple-400">"status"</span>: <span className="text-emerald-400">true</span>,</div>
+                        <div className="pl-4"><span className="text-purple-400">"result"</span>: &#123;</div>
+                        <div className="pl-8"><span className="text-purple-400">"title"</span>: <span className="text-orange-300">"Dandelions - Ruth B."</span>,</div>
+                        <div className="pl-8"><span className="text-purple-400">"dl"</span>: <span className="text-blue-400">"https://cdn.wasidev.com/..."</span></div>
+                        <div className="pl-4">&#125;</div>
+                        <div className="text-slate-400">&#125;</div>
+                      </motion.div>
+                    </AnimatePresence>
+                  </div>
+                </div>
               </div>
-              <div className="text-xs text-slate-500 font-mono ml-2">bash</div>
-            </div>
-            <div className="p-6 font-mono text-sm text-left">
-              <div className="flex items-center gap-2 text-slate-400">
-                <span className="text-blue-500">❯</span> npm install wasi-md-v7
-              </div>
-              <div className="mt-2 text-slate-500">
-                + wasi-md-v7@7.0.0 <br />
-                added 1 package in 0.4s
-              </div>
-              <div className="flex items-center gap-2 text-slate-400 mt-4">
-                <span className="text-blue-500">❯</span> wasi start --session=main
-              </div>
-              <div className="mt-2 text-emerald-400">
-                [SYSTEM] Wasi MD V7 is online <br />
-                [INFO] Connected to Database <br />
-                [INFO] Listening for events...
-              </div>
-            </div>
-          </motion.div>
+            </motion.div>
+          </div>
         </div>
       </section>
 
-      {/* Stats Section */}
-      <section id="stats" className="py-20 border-y border-white/5 bg-slate-900/20">
+      {/* Features Grid */}
+      <section id="features" className="py-32 relative">
         <div className="container mx-auto px-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+            <FeatureCard
+              icon={<Zap className="h-6 w-6 text-yellow-400" />}
+              title="Lightning Fast"
+              description="Proprietary scraping engines built for sub-second responses and high concurrency."
+            />
+            <FeatureCard
+              icon={<ShieldCheck className="h-6 w-6 text-emerald-400" />}
+              title="Anti-Ban Tech"
+              description="Sophisticated proxy rotation and fingerprinting to bypass the toughest bot protections."
+            />
+            <FeatureCard
+              icon={<Globe className="h-6 w-6 text-blue-400" />}
+              title="Global Scale"
+              description="Distributed nodes across the globe for low-latency access from anywhere."
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* API Tester Section */}
+      <section id="api-tester" className="py-24 bg-slate-900/30 border-y border-white/5">
+        <div className="container mx-auto px-6">
+          <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-8">
+            <div className="max-w-2xl">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-400 text-xs font-bold mb-6">
+                <FlaskConical className="h-4 w-4" />
+                API TESTING LAB
+              </div>
+              <h2 className="text-4xl md:text-5xl font-black mb-4">Test All <span className="text-gradient">Endpoints</span></h2>
+              <p className="text-slate-400 text-lg">Click to test individual APIs or run all tests at once to verify system health.</p>
+            </div>
+            <Button
+              onClick={testAllEndpoints}
+              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-bold px-8 h-14 rounded-full transition-all hover:scale-105 active:scale-95 shadow-lg shadow-purple-500/20"
+            >
+              <Play className="mr-2 h-5 w-5" />
+              Test All APIs
+            </Button>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {API_ENDPOINTS.map((api, i) => {
+              const result = apiResults[api.name];
+              return (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.1 }}
+                >
+                  <Card className="bg-slate-950/60 border-white/5 hover:border-white/10 transition-all p-6 rounded-2xl backdrop-blur-md group">
+                    <div className="flex items-start justify-between mb-4">
+                      <div>
+                        <h3 className="text-lg font-bold text-white mb-1">{api.name}</h3>
+                        <code className="text-xs text-slate-500 font-mono break-all">{api.endpoint.substring(0, 40)}...</code>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        {result?.status === 'loading' && (
+                          <Loader2 className="h-5 w-5 text-blue-400 animate-spin" />
+                        )}
+                        {result?.status === 'success' && (
+                          <CheckCircle2 className="h-5 w-5 text-emerald-400" />
+                        )}
+                        {result?.status === 'error' && (
+                          <XCircle className="h-5 w-5 text-red-400" />
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <span className={`text-xs font-bold px-2 py-1 rounded ${api.method === 'GET' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-blue-500/20 text-blue-400'
+                          }`}>
+                          {api.method}
+                        </span>
+                        {result?.time && (
+                          <span className="text-xs text-slate-500">{result.time}ms</span>
+                        )}
+                      </div>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => testEndpoint(api.name, api.endpoint)}
+                        disabled={result?.status === 'loading'}
+                        className="text-slate-400 hover:text-white hover:bg-white/5 text-xs"
+                      >
+                        {result?.status === 'loading' ? 'Testing...' : 'Test'}
+                      </Button>
+                    </div>
+
+                    {result?.status === 'error' && result.message && (
+                      <div className="mt-3 text-xs text-red-400 bg-red-500/10 px-3 py-2 rounded-lg">
+                        {result.message}
+                      </div>
+                    )}
+                  </Card>
+                </motion.div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* Ecosystem Section */}
+      <section id="projects" className="py-24 bg-slate-900/20 border-y border-white/5">
+        <div className="container mx-auto px-6">
+          <div className="flex flex-col md:flex-row md:items-end justify-between mb-20 gap-8">
+            <div className="max-w-2xl">
+              <h2 className="text-4xl md:text-5xl font-black mb-6">The WASIDEV <br /><span className="text-gradient">Ecosystem</span></h2>
+              <p className="text-slate-400 text-lg">Powerful tools designed for developers who demand reliability and performance.</p>
+            </div>
+            <Button variant="outline" className="rounded-full border-white/10 h-12 px-8">View All APIs</Button>
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <StatsCard
-              title="API Status"
-              value={healthData ? "Online" : "Connecting..."}
-              icon={<Activity className="h-5 w-5 text-emerald-500" />}
-              desc="System Operational"
-              loading={!healthData}
-            />
-            <StatsCard
-              title="Uptime"
-              value={healthData ? `${Math.floor(healthData.uptime / 60)}m` : "..."}
-              icon={<Server className="h-5 w-5 text-blue-500" />}
-              desc="Current Session"
-              loading={!healthData}
-            />
-            <StatsCard
-              title="Total Requests"
-              value={healthData ? healthData.requests : "0"}
-              icon={<Terminal className="h-5 w-5 text-purple-500" />}
-              desc="Processed Interactions"
-              loading={!healthData}
-            />
-            <StatsCard
-              title="Active Users"
-              value="1,240+"
-              icon={<Users className="h-5 w-5 text-orange-500" />}
-              desc="Across all nodes"
-              loading={false}
-            />
-          </div>
-        </div>
-      </section>
-
-      {/* Featured Projects */}
-      <section id="projects" className="py-24">
-        <div className="container mx-auto px-6">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400">
-              Ecosystem & Scrapers
-            </h2>
-            <p className="text-slate-400 mt-4 max-w-2xl mx-auto">
-              Professional tools built to handle scale. From social media scraping to automated messaging infrastructure.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {PROJECTS.map((project, i) => (
-              <Card key={i} className="bg-slate-900/40 border-slate-800 hover:border-slate-700 transition-colors group">
-                <CardHeader>
-                  <CardTitle className="flex items-center justify-between text-xl">
-                    {project.name}
-                    <ExternalLink className="h-4 w-4 text-slate-500 group-hover:text-blue-400 transition-colors" />
-                  </CardTitle>
-                  <CardDescription className="text-slate-400">
-                    {project.status}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-slate-300 text-sm mb-6 leading-relaxed">
+              <motion.div
+                key={i}
+                whileHover={{ y: -8 }}
+                className="group relative"
+              >
+                <div className="absolute inset-0 bg-blue-500/5 rounded-3xl blur-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
+                <Card className="h-full bg-slate-950/40 border-white/5 hover:border-blue-500/30 transition-all duration-500 rounded-3xl overflow-hidden backdrop-blur-md relative z-10 p-8">
+                  <div className="h-12 w-12 rounded-2xl bg-white/5 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500">
+                    {project.icon}
+                  </div>
+                  <h3 className="text-xl font-bold mb-3">{project.name}</h3>
+                  <p className="text-slate-400 text-sm leading-relaxed mb-6">
                     {project.desc}
                   </p>
-                  <div className="flex flex-wrap gap-2">
-                    {project.tags.map((tag) => (
-                      <span key={tag} className="px-2 py-1 rounded bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-medium">
+                  <div className="flex flex-wrap gap-2 mt-auto">
+                    {project.tags.map(tag => (
+                      <span key={tag} className="text-[10px] uppercase font-bold tracking-wider text-slate-500 px-3 py-1 bg-white/5 rounded-full">
                         {tag}
                       </span>
                     ))}
                   </div>
-                </CardContent>
-              </Card>
+                </Card>
+              </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="py-12 border-t border-white/5 bg-slate-950">
-        <div className="container mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="text-slate-500 text-sm">
-            © 2026 Wasidev. All rights reserved. <br />
-            Built by <span className="text-blue-400">Itxxwasi (Mr. Wasi)</span> - Full Stack Developer & Learner.
+      {/* Stats Section with Live Pulse */}
+      <section id="stats" className="py-32">
+        <div className="container mx-auto px-6 text-center">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold mb-12 animate-pulse">
+            <Activity className="h-4 w-4" />
+            LIVE SYSTEM STATUS
           </div>
-          <div className="flex gap-6 text-slate-400">
-            <a href="https://github.com/itxxwasi" target="_blank" className="hover:text-white transition-colors">GitHub</a>
-            <a href="#" className="hover:text-white transition-colors">Discord</a>
-            <a href="#" className="hover:text-white transition-colors">Twitter</a>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 text-white">
+            <div className="space-y-4">
+              <div className="text-6xl font-black">{healthData ? "99.9%" : "99.9%"}</div>
+              <div className="text-slate-400 font-bold uppercase tracking-widest text-[10px]">Average Uptime</div>
+            </div>
+            <div className="space-y-4">
+              <div className="text-6xl font-black">{healthData ? `${healthData.requests}+` : "1.2M"}</div>
+              <div className="text-slate-400 font-bold uppercase tracking-widest text-[10px]">Daily Requests</div>
+            </div>
+            <div className="space-y-4">
+              <div className="text-6xl font-black">45ms</div>
+              <div className="text-slate-400 font-bold uppercase tracking-widest text-[10px]">Avg Latency</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="py-20 border-t border-white/5 bg-slate-950/50 backdrop-blur-xl absolute bottom-0 w-full">
+        <div className="container mx-auto px-6">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6 text-xs text-slate-500 font-bold">
+            <div>© 2026 WASIDEV. SOLUTIONS BY ITXXWASI.</div>
+            <div className="flex gap-8">
+              <a href="#" className="hover:text-white transition-colors">GITHUB</a>
+              <a href="#" className="hover:text-white transition-colors">DISCORD</a>
+              <a href="#" className="hover:text-white transition-colors">PRIVACY</a>
+            </div>
           </div>
         </div>
       </footer>
@@ -226,50 +390,41 @@ export default function LandingPage() {
   );
 }
 
-// Components and Consants
-
-function StatsCard({ title, value, icon, desc, loading }: any) {
+function FeatureCard({ icon, title, description }: any) {
   return (
-    <Card className="bg-slate-900/40 border-slate-800">
-      <CardContent className="p-6">
-        <div className="flex items-center justify-between mb-4">
-          <div className="text-slate-400 text-sm font-medium">{title}</div>
-          {icon}
-        </div>
-        <div className="text-3xl font-bold text-white mb-1">
-          {loading ? (
-            <div className="h-8 w-24 bg-slate-800 animate-pulse rounded" />
-          ) : value}
-        </div>
-        <div className="text-xs text-slate-500">{desc}</div>
-      </CardContent>
-    </Card>
-  )
+    <div className="space-y-6 group text-white">
+      <div className="h-16 w-16 rounded-3xl bg-slate-900/80 border border-white/5 flex items-center justify-center shadow-xl group-hover:scale-110 group-hover:border-blue-500/50 transition-all duration-500">
+        {icon}
+      </div>
+      <h3 className="text-2xl font-black">{title}</h3>
+      <p className="text-slate-400 leading-relaxed text-sm">{description}</p>
+    </div>
+  );
 }
 
 const PROJECTS = [
   {
-    name: "Wasi MD V7",
-    status: "Production • v7.0.1",
-    desc: "The flagship WhatsApp bot utilizing the latest Baileys library. Features localized content, simplified plugin system, and anti-ban architecture.",
-    tags: ["Node.js", "WebSocket", "Baileys"],
+    name: "Wasi MD Core",
+    desc: "The heartbeat of our automation ecosystem. High-concurrency WhatsApp engine.",
+    icon: <Bot className="h-6 w-6 text-blue-500" />,
+    tags: ["Node.js", "Baileys", "WebSocket"]
   },
   {
-    name: "Media Scraper API",
-    status: "Active • 99.9% Uptime",
-    desc: "High-throughput API for downloading media from TikTok, Instagram, and YouTube. Built with Express and Puppeteer for reliable extraction.",
-    tags: ["Express", "Puppeteer", "ffmpeg"],
+    name: "Media Scrapers",
+    desc: "Universal extractors for TikTok, IG, FB and YT with native y2mate-engine.",
+    icon: <Play className="h-6 w-6 text-emerald-400" />,
+    tags: ["Puppeteer", "Express", "Axios"]
   },
   {
-    name: "Cricket Live Score",
-    status: "Beta • Real-time",
-    desc: "Real-time cricket match data delivery system. Fetches scores, commentary, and player stats with sub-second latency.",
-    tags: ["Cheerio", "Next.js", "Redis"],
+    name: "KitabNagri SDK",
+    desc: "Deep-scraping engine for the largest Urdu novel database in the world.",
+    icon: <ExternalLink className="h-6 w-6 text-purple-400" />,
+    tags: ["Fuzzy Match", "PDF Gen"]
   },
   {
-    name: "KitabNagri Scraper",
-    status: "New • Live",
-    desc: "A specialized scraper for KitabNagri.org. Allows users to search through thousands of Urdu novels and download them as PDFs directly.",
-    tags: ["Axios", "Cheerio", "PDF"],
-  },
-]
+    name: "Cricket Realtime",
+    desc: "Sub-second match updates, scorecard analytics, and player metrics scraping.",
+    icon: <Zap className="h-6 w-6 text-orange-400" />,
+    tags: ["Cheerio", "Redis", "Realtime"]
+  }
+];

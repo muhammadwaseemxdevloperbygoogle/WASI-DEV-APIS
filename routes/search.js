@@ -46,4 +46,16 @@ router.get('/chat', async (req, res) => {
     res.json(result);
 });
 
+/**
+ * YouTube Search
+ * GET /api/search/youtube?q=...
+ */
+router.get('/youtube', async (req, res) => {
+    const { q } = req.query;
+    if (!q) return res.status(400).json({ status: false, message: "Query (q) is required" });
+    const youtube = require('../lib/youtube');
+    const result = await youtube.youtubeSearch(q);
+    res.json(result);
+});
+
 module.exports = router;

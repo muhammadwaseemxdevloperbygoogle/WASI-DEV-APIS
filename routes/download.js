@@ -91,4 +91,30 @@ router.get('/mediafire', async (req, res) => {
     res.json(result);
 });
 
+/**
+ * YouTube Video Download
+ * GET /api/download/youtube/video?url=...
+ */
+router.get('/youtube/video', async (req, res) => {
+    const { url } = req.query;
+    if (!url) return res.status(400).json({ status: false, message: "URL is required" });
+
+    const youtube = require('../lib/youtube');
+    const result = await youtube.youtubeDl(url, 'video');
+    res.json(result);
+});
+
+/**
+ * YouTube Audio Download
+ * GET /api/download/youtube/audio?url=...
+ */
+router.get('/youtube/audio', async (req, res) => {
+    const { url } = req.query;
+    if (!url) return res.status(400).json({ status: false, message: "URL is required" });
+
+    const youtube = require('../lib/youtube');
+    const result = await youtube.youtubeDl(url, 'audio');
+    res.json(result);
+});
+
 module.exports = router;
